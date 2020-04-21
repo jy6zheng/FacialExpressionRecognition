@@ -27,8 +27,6 @@ face_cascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 vs = VideoStream(src=0).start()
 start = time.perf_counter()
 
-
-
 data = []
 time_value = 0
 
@@ -65,7 +63,6 @@ def data_time(time_value, prediction, probability, ear):
 
 
 
-detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 
 (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]
@@ -73,11 +70,12 @@ predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 
 
 if args["save"]:
-    out = cv2.VideoWriter(path + "liveoutput.avi", cv2.VideoWriter_fourcc('M','J','P','G'), 10, (frame_width,frame_height))
+    out = cv2.VideoWriter(path + "liveoutput.avi", cv2.VideoWriter_fourcc('M','J','P','G'), 10, (450,253))
+
 while True:
     frame = vs.read()
     frame = imutils.resize(frame, width=450)
-    (frame_width, frame_height, _) = frame.shape
+
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     face_coord = face_cascade.detectMultiScale(gray, 1.1, 5, minSize=(30, 30))
 
@@ -124,7 +122,7 @@ while True:
     cv2.imshow("frame", frame)
 
     if args["save"]:
-            out.write(frame)
+        out.write(frame)
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break
 
