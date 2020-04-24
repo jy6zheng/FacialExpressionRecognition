@@ -3,7 +3,6 @@ import numpy as np
 import cv2
 from imutils import face_utils
 from imutils.video import VideoStream
-from pathlib import Path
 from fastai.vision import *
 import imutils
 import argparse
@@ -30,7 +29,7 @@ start = time.perf_counter()
 data = []
 time_value = 0
 
-EYE_AR_THRESH = 0.3
+EYE_AR_THRESH = 0.20
 EYE_AR_CONSEC_FRAMES = 10
 
 COUNTER = 0
@@ -112,7 +111,7 @@ while True:
         if ear < EYE_AR_THRESH:
             COUNTER += 1
             if COUNTER >= EYE_AR_CONSEC_FRAMES:
-                cv2.putText(frame, "Distracted Driving", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+                cv2.putText(frame, "Distracted", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
         else:
             COUNTER = 0
             ALARM_ON = False
