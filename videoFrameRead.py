@@ -50,16 +50,6 @@ def eye_aspect_ratio(eye):
 	C = dist.euclidean(eye[0], eye[3])
 	ear = (A + B) / (2.0 * C)
 	return ear
-def text_display_results(frame, prediction):
-    font = cv2.FONT_HERSHEY_SIMPLEX
-    fontScale = 0.7
-    color = (255, 255, 255)
-    thickness = 2
-    text = str(prediction)
-    (text_width, text_height) = cv2.getTextSize(text, font, fontScale=fontScale, thickness=1)[0]
-    text_offset_x = 10
-    text_offset_y = frame.shape[0] - 25
-    cv2.putText(frame, text, (text_offset_x, text_offset_y), font, fontScale, color, thickness, cv2.LINE_AA)
 
 predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]
@@ -113,7 +103,8 @@ while vidcap.more():
                 color=(128, 128, 0),
                 thickness=2,
             )
-        text_display_results(frame, prediction)
+
+        cv2.putText(frame, str(prediction), (10, frame.shape[0] - 25), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (225, 255, 255), 2)
 
     cv2.imshow("frame", frame)
     framecount += 1

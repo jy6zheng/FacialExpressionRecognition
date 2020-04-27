@@ -1,3 +1,10 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Apr 16 15:07:17 2020
+
+@author: joycezheng
+"""
 from scipy.spatial import distance as dist
 import numpy as np
 import cv2
@@ -33,7 +40,7 @@ EYE_AR_THRESH = 0.20
 EYE_AR_CONSEC_FRAMES = 10
 
 COUNTER = 0
-ALARM_ON = False
+
 
 def eye_aspect_ratio(eye):
 	A = dist.euclidean(eye[1], eye[5])
@@ -41,16 +48,7 @@ def eye_aspect_ratio(eye):
 	C = dist.euclidean(eye[0], eye[3])
 	ear = (A + B) / (2.0 * C)
 	return ear
-def text_display_results(image, prediction):
-    font = cv2.FONT_HERSHEY_SIMPLEX
-    fontScale = 0.7
-    color = (255, 255, 255)
-    thickness = 2
-    text = str(prediction)+" "
-    (text_width, text_height) = cv2.getTextSize(text, font, fontScale=fontScale, thickness=1)[0]
-    text_offset_x = 10
-    text_offset_y = image.shape[0] - 25
-    cv2.putText(image, text, (text_offset_x, text_offset_y), font, fontScale, color, thickness, cv2.LINE_AA)
+
 
 
 def data_time(time_value, prediction, probability, ear):
@@ -95,7 +93,7 @@ while True:
             )
         rect = dlib.rectangle(X, Y, X+w, Y+h)
 
-        text_display_results(frame, prediction)
+        cv2.putText(frame, str(prediction), (10, frame.shape[0] - 25), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (225, 255, 255), 2)
 
         shape = predictor(gray, rect)
         shape = face_utils.shape_to_np(shape)
@@ -114,7 +112,6 @@ while True:
                 cv2.putText(frame, "Distracted", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
         else:
             COUNTER = 0
-            ALARM_ON = False
         cv2.putText(frame, "Eye Ratio: {:.2f}".format(ear), (250, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
         time_value = data_time(time_value, prediction, probability, ear)
 
@@ -125,10 +122,13 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break
 
-df = pd.DataFrame(data, columns = ['Time (seconds)', 'Expression', 'Probability', 'EAR'])
-df.to_csv(path+'/exportlive.csv')
+if args["savedata"]:
+    df = pd.DataFrame(data, columns = ['Time (seconds)', 'Expression', 'Probability', 'EAR'])
+    df.to_csv(path+'/exportlive.csv')
+    print("data saved to exportlive.csv")
 
 vs.stop()
 if args["save"]:
+    print("done saving video")
     out.release()
 cv2.destroyAllWindows()
